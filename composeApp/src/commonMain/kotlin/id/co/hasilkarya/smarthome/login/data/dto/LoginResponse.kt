@@ -1,4 +1,4 @@
-package id.co.hasilkarya.smarthome.login.data
+package id.co.hasilkarya.smarthome.login.data.dto
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName

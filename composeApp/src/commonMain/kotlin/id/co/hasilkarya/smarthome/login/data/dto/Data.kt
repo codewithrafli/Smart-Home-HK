@@ -1,5 +1,6 @@
-package id.co.hasilkarya.smarthome.login.data
+package id.co.hasilkarya.smarthome.login.data.dto
 
+import id.co.hasilkarya.smarthome.login.domain.model.UserWithToken
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
 
@@ -17,4 +18,6 @@ data class Data(
 
 	@SerialName("token")
 	val token: String
-)
+) {
+    fun toUserWithToken() = UserWithToken(id, name, token)
+}
