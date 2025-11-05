@@ -1,4 +1,4 @@
-package id.co.hasilkarya.smarthome.smarthomehasilkarya
+package id.co.hasilkarya.smarthome
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import id.co.hasilkarya.smarthome.core.App
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -47,11 +47,11 @@ kotlin {
 }
 
 android {
-    namespace = "id.co.hasilkarya.smarthome.smarthomehasilkarya"
+    namespace = "id.co.hasilkarya.smarthome"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "id.co.hasilkarya.smarthome.smarthomehasilkarya"
+        applicationId = "id.co.hasilkarya.smarthome"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
