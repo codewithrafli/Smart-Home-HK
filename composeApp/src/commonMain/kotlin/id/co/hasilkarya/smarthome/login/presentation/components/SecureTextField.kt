@@ -1,6 +1,8 @@
 package id.co.hasilkarya.smarthome.login.presentation.components
 
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.Icon
@@ -11,6 +13,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -33,6 +37,7 @@ fun SecureTextField(
     hint: String,
     leadingIcon: @Composable (() -> Unit)? = null,
     isVisible: Boolean,
+    onDone: (() -> Unit),
 ) {
     OutlinedTextField(
         modifier = modifier,
@@ -43,6 +48,13 @@ fun SecureTextField(
         placeholder = {
             Text(hint, color = BrokenWhite.copy(0.85f))
         },
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = { onDone.invoke() }
+        ),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = BrokenWhite,
             unfocusedBorderColor = BrokenWhite.copy(0.11f),
@@ -86,8 +98,8 @@ fun SecureTextField(
 fun SecureTextFieldPreview() {
     SecureTextField(
         value = "",
-        onValueChange = {  },
-        onVisibilityChange = {  },
+        onValueChange = { },
+        onVisibilityChange = { },
         hint = "Password",
         isVisible = true,
         leadingIcon = {
@@ -95,6 +107,8 @@ fun SecureTextFieldPreview() {
                 painter = painterResource(Res.drawable.lock),
                 contentDescription = stringResource(Res.string.lock_icon),
             )
-        }
+        },
+        modifier = Modifier,
+        onDone = {}
     )
 }

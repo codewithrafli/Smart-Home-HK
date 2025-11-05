@@ -5,6 +5,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Icon
@@ -15,6 +17,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import id.co.hasilkarya.smarthome.core.theme.BrokenWhite
 import org.jetbrains.compose.resources.painterResource
@@ -32,6 +36,7 @@ fun CustomTextField(
     onValueChange: (String) -> Unit,
     hint: String,
     leadingIcon: @Composable (() -> Unit)? = null,
+    onNext: (() -> Unit),
 ) {
     OutlinedTextField(
         modifier = modifier,
@@ -42,6 +47,16 @@ fun CustomTextField(
         textStyle = TextStyle(
             color = BrokenWhite
         ),
+        placeholder = {
+            Text(hint, color = BrokenWhite.copy(0.85f))
+        },
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Next
+        ),
+        keyboardActions = KeyboardActions(
+            onNext = { onNext.invoke() }
+        ),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = BrokenWhite,
             unfocusedBorderColor = BrokenWhite.copy(0.11f),
@@ -51,9 +66,6 @@ fun CustomTextField(
             focusedTrailingIconColor = BrokenWhite,
             unfocusedTrailingIconColor = BrokenWhite.copy(0.85f),
         ),
-        placeholder = {
-            Text(hint, color = BrokenWhite.copy(0.85f))
-        },
         trailingIcon = {
             AnimatedVisibility(
                 visible = value.isNotEmpty(),
@@ -80,7 +92,7 @@ fun CustomTextFieldPreview() {
     CustomTextField(
         modifier = Modifier.padding(16.dp),
         value = "",
-        onValueChange = {  },
+        onValueChange = { },
         hint = "Email",
         leadingIcon = {
             Icon(
@@ -88,6 +100,7 @@ fun CustomTextFieldPreview() {
                 contentDescription = stringResource(Res.string.email_icon),
                 tint = BrokenWhite
             )
-        }
+        },
+        onNext = {  }
     )
 }
