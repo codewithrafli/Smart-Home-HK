@@ -8,4 +8,7 @@ interface LoginRepository {
 
     suspend fun login(email: String, password: String): Result<UserWithToken, DataError.Remote>
 
+    suspend fun saveToken(token: String): Result<Boolean, DataError.Local>
+    suspend fun saveUserId(userId: String): Result<Boolean, DataError.Local>
+
 }

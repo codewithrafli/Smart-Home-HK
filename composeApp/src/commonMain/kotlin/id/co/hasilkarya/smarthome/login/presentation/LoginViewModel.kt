@@ -58,7 +58,9 @@ class LoginViewModel(
             repository.login(
                 email = state.value.email,
                 password = state.value.password
-            ).onSuccess { _ ->
+            ).onSuccess { result ->
+                repository.saveToken(result.token)
+                repository.saveUserId(result.id.toString())
                 _state.update {
                     it.copy(
                         isLoading = false,
