@@ -1,6 +1,7 @@
 package id.co.hasilkarya.smarthome.core.di
 
 import id.co.hasilkarya.smarthome.core.network.HttpClientFactory
+import id.co.hasilkarya.smarthome.core.preferences.AppPreferences
 import id.co.hasilkarya.smarthome.login.data.LoginRepositoryImpl
 import id.co.hasilkarya.smarthome.login.data.datasource.LoginRemoteDataSource
 import id.co.hasilkarya.smarthome.login.data.datasource.LoginRemoteDataSourceImpl
@@ -15,6 +16,7 @@ expect val platformModule: Module
 
 val sharedModule = module {
     single { HttpClientFactory.create(get()) }
+    single<AppPreferences> { AppPreferences(get()) }
 
     singleOf(::LoginRemoteDataSourceImpl).bind<LoginRemoteDataSource>()
     singleOf(::LoginRepositoryImpl).bind<LoginRepository>()
