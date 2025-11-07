@@ -3,6 +3,9 @@ package id.co.hasilkarya.smarthome.core.navigation.data
 import kotlinx.serialization.Serializable
 
 @Serializable
+data object SplashDestination
+
+@Serializable
 data object LoginDestination
 
 @Serializable

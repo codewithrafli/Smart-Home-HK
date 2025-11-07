@@ -7,6 +7,9 @@ import id.co.hasilkarya.smarthome.login.data.datasource.LoginRemoteDataSource
 import id.co.hasilkarya.smarthome.login.data.datasource.LoginRemoteDataSourceImpl
 import id.co.hasilkarya.smarthome.login.domain.LoginRepository
 import id.co.hasilkarya.smarthome.login.presentation.LoginViewModel
+import id.co.hasilkarya.smarthome.splash.data.SplashRepositoryImpl
+import id.co.hasilkarya.smarthome.splash.domain.SplashRepository
+import id.co.hasilkarya.smarthome.splash.presentation.SplashViewModel
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
@@ -18,8 +21,10 @@ val sharedModule = module {
     single { HttpClientFactory.create(get()) }
     single<AppPreferences> { AppPreferences(get()) }
 
+    singleOf(::SplashRepositoryImpl).bind<SplashRepository>()
     singleOf(::LoginRemoteDataSourceImpl).bind<LoginRemoteDataSource>()
     singleOf(::LoginRepositoryImpl).bind<LoginRepository>()
 
     factory { LoginViewModel(get()) }
+    factory { SplashViewModel(get()) }
 }

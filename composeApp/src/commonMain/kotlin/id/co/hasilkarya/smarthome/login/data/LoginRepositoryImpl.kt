@@ -21,7 +21,6 @@ class LoginRepositoryImpl(
         return when (val response = remoteDataSource.login(request)) {
             is Result.Success -> Result.Success(response.data.data.toUserWithToken())
             is Result.Error -> {
-                println("[LoginRepositoryImpl] Login failed: $response")
                 Result.Error(response.error)
             }
         }
