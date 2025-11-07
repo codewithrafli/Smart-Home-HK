@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,7 +36,16 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    state: HomeState,
+    onEvent: (HomeEvent) -> Unit,
+) {
+
+    LaunchedEffect(state.token) {
+        if (state.token.isNotBlank())
+            onEvent(HomeEvent.OnLoadData)
+    }
+
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
@@ -115,32 +126,9 @@ fun HomeScreen() {
                     }
                 }
             }
-            item {
+            items(state.devices) { device ->
                 DeviceCard(
-                    device = Device(
-                        id = 1,
-                        name = "Gerbang Utama",
-                        uniqueId = "32414234",
-                        deviceType = DeviceType(id = 1, name = "Lampu"),
-                        room = Room(id = 1, name = "Ruang Keluarga"),
-                        home = Home(id = 1, name = "Rumah Keluarga Bahagia"),
-                        properties = mapOf("state" to STATE_ON_KEY),
-                        uiConfig = mapOf("icon" to LAMP_ICON_KEY)
-                    )
-                )
-            }
-            item {
-                DeviceCard(
-                    device = Device(
-                        id = 1,
-                        name = "Gerbang Utama",
-                        uniqueId = "32414234",
-                        deviceType = DeviceType(id = 1, name = "Lampu"),
-                        room = Room(id = 1, name = "Ruang Keluarga"),
-                        home = Home(id = 1, name = "Rumah Keluarga Bahagia"),
-                        properties = mapOf("state" to STATE_OFF_KEY),
-                        uiConfig = mapOf("icon" to LAMP_ICON_KEY)
-                    )
+                    device = device
                 )
             }
         }
@@ -158,6 +146,9 @@ fun getCurrentHourInt(): Int {
 @Composable
 fun HomeScreenPreview() {
     SmartHomeTheme {
-        HomeScreen()
+        HomeScreen(
+            state = HomeState(),
+            onEvent = {  }
+        )
     }
 }
