@@ -3,8 +3,11 @@ package id.co.hasilkarya.smarthome.core.navigation.component
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,8 +30,7 @@ fun NavbarItem(
     isSelected: Boolean,
 ) {
     Surface(
-        color = Color.Black.copy(0.5f),
-        shape = CircleShape,
+        color = Color.Transparent,
         onClick = onNavigate,
     ) {
         Column(
@@ -36,14 +38,15 @@ fun NavbarItem(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(
+                modifier = Modifier.size(36.dp),
                 imageVector = if (isSelected) data.activeIcon else data.inActiveIcon,
                 contentDescription = data.title,
                 tint = BrokenWhite,
             )
             AnimatedVisibility(
-                visible = !isSelected,
-                enter = fadeIn(),
-                exit = fadeOut()
+                visible = isSelected,
+                enter = fadeIn() + slideInVertically(),
+                exit = fadeOut() + slideOutVertically()
             ) {
                 Text(
                     text = data.title,
