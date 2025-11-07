@@ -10,6 +10,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import id.co.hasilkarya.smarthome.core.navigation.data.LoginDestination
 import id.co.hasilkarya.smarthome.core.navigation.data.MainGraph
 import id.co.hasilkarya.smarthome.core.theme.BrokenWhite
 import kotlinx.coroutines.delay
@@ -28,7 +29,7 @@ fun SplashScreen(
         delay(2000)
         if (state.token.isNotBlank())
             onNavigate(MainGraph)
-        else onNavigate(MainGraph)
+        else onNavigate(LoginDestination)
     }
 
     Box(
