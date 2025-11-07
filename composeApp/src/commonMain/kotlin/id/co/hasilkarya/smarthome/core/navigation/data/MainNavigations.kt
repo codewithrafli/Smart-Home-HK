@@ -4,12 +4,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.SyncLock
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.SyncLock
 import androidx.compose.material.icons.outlined.Timer
 
 val mainNavigations = listOf(

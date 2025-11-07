@@ -5,13 +5,12 @@ import androidx.lifecycle.viewModelScope
 import id.co.hasilkarya.smarthome.splash.domain.SplashRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
 class SplashViewModel(
-    private val repository: SplashRepository
-): ViewModel() {
+    repository: SplashRepository
+) : ViewModel() {
 
     private val _token = repository.getToken()
     private val _state = MutableStateFlow(SplashState())

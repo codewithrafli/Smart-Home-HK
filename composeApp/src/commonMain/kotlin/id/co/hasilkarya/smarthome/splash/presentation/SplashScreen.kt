@@ -3,7 +3,6 @@ package id.co.hasilkarya.smarthome.splash.presentation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import id.co.hasilkarya.smarthome.core.navigation.data.MainGraph
 import id.co.hasilkarya.smarthome.core.theme.BrokenWhite
 import kotlinx.coroutines.delay
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import smarthomehasilkarya.composeapp.generated.resources.Res
