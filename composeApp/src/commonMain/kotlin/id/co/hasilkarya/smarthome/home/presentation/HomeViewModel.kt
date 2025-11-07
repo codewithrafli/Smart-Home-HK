@@ -6,17 +6,12 @@ import id.co.hasilkarya.smarthome.core.network.utils.onError
 import id.co.hasilkarya.smarthome.core.network.utils.onSuccess
 import id.co.hasilkarya.smarthome.core.presentation.asUiText
 import id.co.hasilkarya.smarthome.home.domain.HomeRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val repository: HomeRepository
-): ViewModel() {
+) : ViewModel() {
 
     private val _token = repository.getToken()
     private val _state = MutableStateFlow(HomeState())
@@ -34,14 +29,14 @@ class HomeViewModel(
     private fun loadData() = viewModelScope.launch {
         _state.update { it.copy(isLoading = true) }
         repository.getUser(state.value.token)
-            .onSuccess {  result ->
+            .onSuccess { result ->
                 _state.update { it.copy(user = result, isLoading = false) }
             }
             .onError { error ->
                 _state.update { it.copy(isError = true, message = error.asUiText(), isLoading = false) }
             }
         repository.getDevices(state.value.token)
-            .onSuccess {  result ->
+            .onSuccess { result ->
                 _state.update { it.copy(devices = result, isLoading = false) }
             }
             .onError { error ->

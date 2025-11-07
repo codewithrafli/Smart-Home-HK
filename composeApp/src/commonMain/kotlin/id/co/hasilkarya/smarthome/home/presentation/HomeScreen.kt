@@ -18,14 +18,7 @@ import androidx.compose.ui.unit.dp
 import id.co.hasilkarya.smarthome.core.theme.BrokenWhite
 import id.co.hasilkarya.smarthome.core.theme.DarkBlue
 import id.co.hasilkarya.smarthome.core.theme.SmartHomeTheme
-import id.co.hasilkarya.smarthome.home.domain.models.Device
-import id.co.hasilkarya.smarthome.home.domain.models.DeviceType
-import id.co.hasilkarya.smarthome.home.domain.models.Home
-import id.co.hasilkarya.smarthome.home.domain.models.Room
 import id.co.hasilkarya.smarthome.home.presentation.components.DeviceCard
-import id.co.hasilkarya.smarthome.home.presentation.components.LAMP_ICON_KEY
-import id.co.hasilkarya.smarthome.home.presentation.components.STATE_OFF_KEY
-import id.co.hasilkarya.smarthome.home.presentation.components.STATE_ON_KEY
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.painterResource
@@ -148,7 +141,7 @@ fun HomeScreenPreview() {
     SmartHomeTheme {
         HomeScreen(
             state = HomeState(),
-            onEvent = {  }
+            onEvent = { }
         )
     }
 }
