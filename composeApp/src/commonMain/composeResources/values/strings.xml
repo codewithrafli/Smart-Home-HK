@@ -8,6 +8,11 @@
     <string name="password_visible">Password is currently visible</string>
     <string name="password_not_visible">Password is not currently visible</string>
     <string name="loading">Loading...</string>
+    <string name="on">Menyala</string>
+    <string name="open">Terbuka</string>
+    <string name="closed">Tertutup</string>
+    <string name="off">Mati</string>
+    <string name="unknown">Tidak Terdeteksi</string>
 
     <!--  Error as Strings  -->
     <string name="the_request_timed_out">The request timed out</string>
@@ -21,6 +26,7 @@
     <string name="not_found">Can\'t find item you\'re looking for.</string>
     <string name="bad_request">Bad request.</string>
     <string name="unauthorized">Unauthorized.</string>
+    <string name="notification">Notification Icon</string>
 
     <!--  Login Strings  -->
     <string name="login_header">Masuk RumahCerdas</string>
@@ -33,4 +39,11 @@
     <string name="email_blank">Email cannot be blank.</string>
     <string name="email_invalid">Email is invalid.</string>
     <string name="password_blank">Password cannot be blank.</string>
+
+    <!--  Home Strings  -->
+    <string name="morning">Selamat Pagi,</string>
+    <string name="afternoon">Selamat Siang,</string>
+    <string name="evening">Selamat Malam,</string>
+    <string name="your_device">Perangkat Anda Saat Ini</string>
+    <string name="all_device">Semua Device</string>
 </resources>
