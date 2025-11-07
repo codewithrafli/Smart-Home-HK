@@ -26,7 +26,7 @@ object StringOrObjectMapSerializer : KSerializer<Map<String, JsonElement>> {
                 if (element.content.isBlank()) {
                     return emptyMap()
                 }
-                val innerElement = Json.Default.parseToJsonElement(element.content)
+                val innerElement = Json.parseToJsonElement(element.content)
                 if (innerElement is JsonObject) {
                     return innerElement.jsonObject.toMap()
                 } else {
