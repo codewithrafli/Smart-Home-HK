@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import id.co.hasilkarya.smarthome.core.theme.BrokenWhite
@@ -36,13 +37,13 @@ fun DeviceCard(
     device: Device
 ) {
     Card(
-        modifier = modifier,
+        modifier = modifier.fillMaxHeight(),
         colors = CardDefaults.cardColors(
             containerColor = Color.Black.copy(0.09f),
         )
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.fillMaxHeight().padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Row(
@@ -79,7 +80,7 @@ fun DeviceCard(
             Text(
                 text = device.name,
                 style = MaterialTheme.typography.titleMedium,
-                color = BrokenWhite
+                color = BrokenWhite,
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically,

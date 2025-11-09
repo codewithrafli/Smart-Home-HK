@@ -1,15 +1,9 @@
 package id.co.hasilkarya.smarthome.home.presentation
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
-import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
@@ -45,6 +39,8 @@ fun HomeScreen(
             onEvent(HomeEvent.OnLoadData)
     }
 
+    val deviceRows = state.devices.chunked(2)
+
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
@@ -63,7 +59,7 @@ fun HomeScreen(
                         color = BrokenWhite
                     )
                     Text(
-                        text = "Sendiko",
+                        text = state.user?.name ?: "Loading...",
                         style = MaterialTheme.typography.headlineSmall,
                         color = BrokenWhite
                     )
@@ -90,18 +86,14 @@ fun HomeScreen(
             ) {
                 CustomLoadingNotification()
             }
-            LazyVerticalStaggeredGrid(
+            LazyColumn(
                 contentPadding = PaddingValues(
                     top = it.calculateTopPadding(),
                     start = 16.dp,
                     end = 16.dp,
                 ),
-                columns = StaggeredGridCells.Fixed(2),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                item(
-                    span = StaggeredGridItemSpan.FullLine
-                ) {
+                item {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -133,10 +125,31 @@ fun HomeScreen(
                         }
                     }
                 }
-                items(state.devices) { device ->
-                    DeviceCard(
-                        device = device
-                    )
+                items(deviceRows) { devicePair ->
+                    Row(
+                        modifier = Modifier
+                            .height(IntrinsicSize.Min)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        DeviceCard(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight(),
+                            device = devicePair.first()
+                        )
+
+                        if (devicePair.size > 1) {
+                            DeviceCard(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight(),
+                                device = devicePair.last()
+                            )
+                        } else {
+                            Spacer(Modifier.weight(1f))
+                        }
+                    }
                 }
             }
         }
