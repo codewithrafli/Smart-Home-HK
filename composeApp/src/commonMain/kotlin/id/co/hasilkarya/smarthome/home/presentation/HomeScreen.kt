@@ -1,29 +1,25 @@
 package id.co.hasilkarya.smarthome.home.presentation
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import id.co.hasilkarya.smarthome.core.presentation.CustomLoadingNotification
+import id.co.hasilkarya.smarthome.core.presentation.CustomNotification
 import id.co.hasilkarya.smarthome.core.theme.BrokenWhite
 import id.co.hasilkarya.smarthome.core.theme.DarkBlue
 import id.co.hasilkarya.smarthome.core.theme.SmartHomeTheme
-import id.co.hasilkarya.smarthome.home.domain.models.Device
-import id.co.hasilkarya.smarthome.home.domain.models.DeviceType
-import id.co.hasilkarya.smarthome.home.domain.models.Home
-import id.co.hasilkarya.smarthome.home.domain.models.Room
 import id.co.hasilkarya.smarthome.home.presentation.components.DeviceCard
-import id.co.hasilkarya.smarthome.home.presentation.components.LAMP_ICON_KEY
-import id.co.hasilkarya.smarthome.home.presentation.components.STATE_OFF_KEY
-import id.co.hasilkarya.smarthome.home.presentation.components.STATE_ON_KEY
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.painterResource
@@ -34,7 +30,18 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    state: HomeState,
+    onEvent: (HomeEvent) -> Unit,
+) {
+
+    LaunchedEffect(state.token) {
+        if (state.token.isNotBlank())
+            onEvent(HomeEvent.OnLoadData)
+    }
+
+    val deviceRows = state.devices.chunked(2)
+
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
@@ -53,7 +60,7 @@ fun HomeScreen() {
                         color = BrokenWhite
                     )
                     Text(
-                        text = "Sendiko",
+                        text = state.user?.name ?: "Loading...",
                         style = MaterialTheme.typography.headlineSmall,
                         color = BrokenWhite
                     )
@@ -72,76 +79,97 @@ fun HomeScreen() {
             }
         }
     ) {
-        LazyVerticalStaggeredGrid(
-            contentPadding = PaddingValues(
-                top = it.calculateTopPadding(),
-                start = 16.dp,
-                end = 16.dp,
-            ),
-            columns = StaggeredGridCells.Fixed(2),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            item(
-                span = StaggeredGridItemSpan.FullLine
+        Box {
+            AnimatedVisibility(
+                visible = state.isLoading,
+                enter = fadeIn() + slideInVertically(),
+                exit = fadeOut() + slideOutVertically()
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(Res.string.your_device),
-                        color = BrokenWhite,
-                    )
-                    Surface(
-                        color = Color.Transparent,
-                        onClick = { }
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
+                CustomLoadingNotification()
+            }
+            LazyColumn(
+                contentPadding = PaddingValues(
+                    top = it.calculateTopPadding(),
+                    start = 16.dp,
+                    end = 16.dp,
+                ),
+            ) {
+                if (state.isError) {
+                    item {
+                        AnimatedVisibility(
+                            state.isError && state.message.asComposableString().isNotEmpty()
                         ) {
-                            Text(
-                                text = stringResource(Res.string.all_device),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = BrokenWhite
-                            )
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                                contentDescription = stringResource(Res.string.all_device),
-                                tint = BrokenWhite,
-                                modifier = Modifier.size(16.dp)
+                            CustomNotification(
+                                isError = state.isError,
+                                data = state.message.asComposableString()
                             )
                         }
                     }
                 }
-            }
-            item {
-                DeviceCard(
-                    device = Device(
-                        id = 1,
-                        name = "Gerbang Utama",
-                        uniqueId = "32414234",
-                        deviceType = DeviceType(id = 1, name = "Lampu"),
-                        room = Room(id = 1, name = "Ruang Keluarga"),
-                        home = Home(id = 1, name = "Rumah Keluarga Bahagia"),
-                        properties = mapOf("state" to STATE_ON_KEY),
-                        uiConfig = mapOf("icon" to LAMP_ICON_KEY)
-                    )
-                )
-            }
-            item {
-                DeviceCard(
-                    device = Device(
-                        id = 1,
-                        name = "Gerbang Utama",
-                        uniqueId = "32414234",
-                        deviceType = DeviceType(id = 1, name = "Lampu"),
-                        room = Room(id = 1, name = "Ruang Keluarga"),
-                        home = Home(id = 1, name = "Rumah Keluarga Bahagia"),
-                        properties = mapOf("state" to STATE_OFF_KEY),
-                        uiConfig = mapOf("icon" to LAMP_ICON_KEY)
-                    )
-                )
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.your_device),
+                            color = BrokenWhite,
+                        )
+                        Surface(
+                            color = Color.Transparent,
+                            onClick = { }
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    text = stringResource(Res.string.all_device),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = BrokenWhite
+                                )
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                                    contentDescription = stringResource(Res.string.all_device),
+                                    tint = BrokenWhite,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+                items(deviceRows) { devicePair ->
+                    Row(
+                        modifier = Modifier
+                            .height(IntrinsicSize.Min)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        DeviceCard(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight(),
+                            device = devicePair.first(),
+                            onToggle = { device, property, value ->
+                                onEvent(HomeEvent.OnDeviceToggle(device, property, value))
+                            }
+                        )
+
+                        if (devicePair.size > 1) {
+                            DeviceCard(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight(),
+                                device = devicePair.last(),
+                                onToggle = { device, property, value ->
+                                    onEvent(HomeEvent.OnDeviceToggle(device, property, value))
+                                }
+                            )
+                        } else {
+                            Spacer(Modifier.weight(1f))
+                        }
+                    }
+                }
             }
         }
     }
@@ -158,6 +186,9 @@ fun getCurrentHourInt(): Int {
 @Composable
 fun HomeScreenPreview() {
     SmartHomeTheme {
-        HomeScreen()
+        HomeScreen(
+            state = HomeState(),
+            onEvent = { }
+        )
     }
 }

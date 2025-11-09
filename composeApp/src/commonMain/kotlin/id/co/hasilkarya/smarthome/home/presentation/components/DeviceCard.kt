@@ -33,16 +33,17 @@ const val STATE_CLOSED_KEY = "closed"
 @Composable
 fun DeviceCard(
     modifier: Modifier = Modifier,
-    device: Device
+    device: Device,
+    onToggle: (device: Device, property: String, value: String) -> Unit,
 ) {
     Card(
-        modifier = modifier,
+        modifier = modifier.fillMaxHeight(),
         colors = CardDefaults.cardColors(
             containerColor = Color.Black.copy(0.09f),
         )
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.fillMaxHeight().padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Row(
@@ -79,7 +80,7 @@ fun DeviceCard(
             Text(
                 text = device.name,
                 style = MaterialTheme.typography.titleMedium,
-                color = BrokenWhite
+                color = BrokenWhite,
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -100,7 +101,16 @@ fun DeviceCard(
                 Switch(
                     modifier = Modifier.height(16.dp),
                     checked = device.properties["state"] == STATE_ON_KEY || device.properties["state"] == STATE_OPEN_KEY,
-                    onCheckedChange = { },
+                    onCheckedChange = {
+                        val newState = when (device.properties["state"]) {
+                            STATE_ON_KEY -> STATE_OFF_KEY
+                            STATE_OFF_KEY -> STATE_ON_KEY
+                            STATE_OPEN_KEY -> STATE_CLOSED_KEY
+                            STATE_CLOSED_KEY -> STATE_OPEN_KEY
+                            else -> STATE_OFF_KEY
+                        }
+                        onToggle(device, "state", newState)
+                    },
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = DarkBlue,
                         checkedTrackColor = BrokenWhite,
@@ -113,7 +123,7 @@ fun DeviceCard(
     }
 }
 
-@Preview()
+@Preview
 @Composable
 fun DeviceCardPreview() {
     SmartHomeTheme {
@@ -128,7 +138,8 @@ fun DeviceCardPreview() {
                 home = Home(id = 1, name = "Rumah Keluarga Bahagia"),
                 properties = mapOf("state" to STATE_OFF_KEY),
                 uiConfig = mapOf("icon" to LAMP_ICON_KEY)
-            )
+            ),
+            onToggle = { _, _, _ -> }
         )
     }
 }

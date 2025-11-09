@@ -1,6 +1,7 @@
 package id.co.hasilkarya.smarthome.home.data.dto
 
 import id.co.hasilkarya.smarthome.core.network.utils.StringOrObjectMapSerializer
+import id.co.hasilkarya.smarthome.home.domain.models.Device
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.json.JsonArray
@@ -49,6 +50,18 @@ data class DataItem(
 
     @SerialName("gpio")
 	val gpio: String? = null
+)
+
+fun DataItem.toDomain() = Device(
+    id = id,
+    name = name,
+    home = homeDto.toDomain(),
+    deviceType = deviceTypeDto.toDomain(),
+    room = roomDto.toDomain(),
+    gpio = gpio,
+    properties = properties.toDomainMap(),
+    uiConfig = uiConfig.toDomainMap(),
+    uniqueId = uniqueId
 )
 
 private fun Map<String, JsonElement>.toDomainMap(): Map<String, Any?> {
