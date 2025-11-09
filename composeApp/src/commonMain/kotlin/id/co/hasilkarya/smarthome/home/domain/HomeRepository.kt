@@ -14,4 +14,6 @@ interface HomeRepository {
 
     suspend fun getUser(token: String): Result<User, DataError.Remote>
 
+    suspend fun updateDevice(id: Int,token: String, request: Map<String, Any?>): Result<Boolean, DataError.Remote>
+
 }
