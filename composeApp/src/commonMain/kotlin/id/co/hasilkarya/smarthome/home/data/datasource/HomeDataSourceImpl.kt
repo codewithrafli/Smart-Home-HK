@@ -5,17 +5,18 @@ import id.co.hasilkarya.smarthome.core.network.utils.DataError
 import id.co.hasilkarya.smarthome.core.network.utils.Result
 import id.co.hasilkarya.smarthome.core.network.utils.safeCall
 import id.co.hasilkarya.smarthome.core.preferences.AppPreferences
+import id.co.hasilkarya.smarthome.home.data.dto.DeviceUpdateResponse
 import id.co.hasilkarya.smarthome.home.data.dto.DevicesResponse
 import id.co.hasilkarya.smarthome.home.data.dto.GetUserResponse
-import io.ktor.client.HttpClient
-import io.ktor.client.request.bearerAuth
-import io.ktor.client.request.get
+import io.ktor.client.*
+import io.ktor.client.request.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.serialization.json.JsonObject
 
 class HomeDataSourceImpl(
     private val client: HttpClient,
     private val pref: AppPreferences
-): HomeDataSource {
+) : HomeDataSource {
     override fun getToken(): Flow<String> {
         return pref.getToken()
     }
@@ -31,6 +32,19 @@ class HomeDataSourceImpl(
     override suspend fun getUser(token: String): Result<GetUserResponse, DataError.Remote> {
         return safeCall<GetUserResponse> {
             client.get("$BASE_URL/me") {
+                bearerAuth(token)
+            }
+        }
+    }
+
+    override suspend fun updateDevice(
+        id: Int,
+        token: String,
+        request: JsonObject
+    ): Result<DeviceUpdateResponse, DataError.Remote> {
+        return safeCall<DeviceUpdateResponse> {
+            client.put("$BASE_URL/devices/$id") {
+                setBody(request)
                 bearerAuth(token)
             }
         }
