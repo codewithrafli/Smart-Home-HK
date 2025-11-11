@@ -13,6 +13,8 @@
     <string name="closed">Tertutup</string>
     <string name="off">Mati</string>
     <string name="unknown">Tidak Terdeteksi</string>
+    <string name="back">Kembali</string>
+    <string name="intensity">Intensitas</string>
 
     <!--  Error as Strings  -->
     <string name="the_request_timed_out">The request timed out</string>

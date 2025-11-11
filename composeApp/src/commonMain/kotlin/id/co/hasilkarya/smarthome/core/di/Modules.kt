@@ -2,6 +2,11 @@ package id.co.hasilkarya.smarthome.core.di
 
 import id.co.hasilkarya.smarthome.core.network.HttpClientFactory
 import id.co.hasilkarya.smarthome.core.preferences.AppPreferences
+import id.co.hasilkarya.smarthome.device.data.DeviceRepositoryImpl
+import id.co.hasilkarya.smarthome.device.data.datasource.DeviceRemoteDataSource
+import id.co.hasilkarya.smarthome.device.data.datasource.DeviceRemoteDataSourceImpl
+import id.co.hasilkarya.smarthome.device.domain.DeviceRepository
+import id.co.hasilkarya.smarthome.device.presentation.DeviceViewModel
 import id.co.hasilkarya.smarthome.home.data.HomeRepositoryImpl
 import id.co.hasilkarya.smarthome.home.data.datasource.HomeDataSource
 import id.co.hasilkarya.smarthome.home.data.datasource.HomeDataSourceImpl
@@ -31,8 +36,11 @@ val sharedModule = module {
     singleOf(::LoginRepositoryImpl).bind<LoginRepository>()
     singleOf(::HomeDataSourceImpl).bind<HomeDataSource>()
     singleOf(::HomeRepositoryImpl).bind<HomeRepository>()
+    singleOf(::DeviceRemoteDataSourceImpl).bind<DeviceRemoteDataSource>()
+    singleOf(::DeviceRepositoryImpl).bind<DeviceRepository>()
 
     factory { LoginViewModel(get()) }
     factory { SplashViewModel(get()) }
     factory { HomeViewModel(get()) }
+    factory { DeviceViewModel(get()) }
 }

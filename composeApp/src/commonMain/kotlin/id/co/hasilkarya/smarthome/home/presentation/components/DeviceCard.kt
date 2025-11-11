@@ -35,12 +35,14 @@ fun DeviceCard(
     modifier: Modifier = Modifier,
     device: Device,
     onToggle: (device: Device, property: String, value: String) -> Unit,
+    onClick: () -> Unit,
 ) {
     Card(
         modifier = modifier.fillMaxHeight(),
         colors = CardDefaults.cardColors(
             containerColor = Color.Black.copy(0.09f),
-        )
+        ),
+        onClick = onClick
     ) {
         Column(
             modifier = Modifier.fillMaxHeight().padding(16.dp),
@@ -139,7 +141,8 @@ fun DeviceCardPreview() {
                 properties = mapOf("state" to STATE_OFF_KEY),
                 uiConfig = mapOf("icon" to LAMP_ICON_KEY)
             ),
-            onToggle = { _, _, _ -> }
+            onToggle = { _, _, _ -> },
+            onClick = {  }
         )
     }
 }
