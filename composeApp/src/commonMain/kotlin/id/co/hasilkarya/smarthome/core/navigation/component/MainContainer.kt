@@ -17,15 +17,20 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import id.co.hasilkarya.smarthome.core.navigation.data.*
 import id.co.hasilkarya.smarthome.core.theme.BrokenWhite
+import id.co.hasilkarya.smarthome.core.utils.log
 import id.co.hasilkarya.smarthome.device.presentation.DeviceScreen
 import id.co.hasilkarya.smarthome.device.presentation.DeviceViewModel
 import id.co.hasilkarya.smarthome.home.presentation.HomeScreen
 import id.co.hasilkarya.smarthome.home.presentation.HomeViewModel
+import id.co.hasilkarya.smarthome.profile.presentation.ProfileScreen
+import id.co.hasilkarya.smarthome.profile.presentation.ProfileViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun MainContainer() {
+fun MainContainer(
+    logout: () -> Unit
+) {
     val navController = rememberNavController()
     Scaffold(
         containerColor = Color.Transparent,
@@ -82,15 +87,13 @@ fun MainContainer() {
                 }
             }
             composable<ProfileDestination> {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Text(
-                        text = ProfileDestination.toString(),
-                        color = BrokenWhite
-                    )
-                }
+                val viewModel = koinViewModel<ProfileViewModel>()
+                val state by viewModel.state.collectAsState()
+                ProfileScreen(
+                    state = state,
+                    onEvent = viewModel::onEvent,
+                    onNavigateBack = logout
+                )
             }
         }
     }
@@ -99,5 +102,7 @@ fun MainContainer() {
 @Preview
 @Composable
 fun MainContainerPreview() {
-    MainContainer()
+    MainContainer(
+        logout = {  }
+    )
 }

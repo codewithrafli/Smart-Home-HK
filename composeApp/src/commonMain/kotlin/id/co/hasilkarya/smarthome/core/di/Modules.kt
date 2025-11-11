@@ -17,6 +17,7 @@ import id.co.hasilkarya.smarthome.login.data.datasource.LoginRemoteDataSource
 import id.co.hasilkarya.smarthome.login.data.datasource.LoginRemoteDataSourceImpl
 import id.co.hasilkarya.smarthome.login.domain.LoginRepository
 import id.co.hasilkarya.smarthome.login.presentation.LoginViewModel
+import id.co.hasilkarya.smarthome.profile.presentation.ProfileViewModel
 import id.co.hasilkarya.smarthome.splash.data.SplashRepositoryImpl
 import id.co.hasilkarya.smarthome.splash.domain.SplashRepository
 import id.co.hasilkarya.smarthome.splash.presentation.SplashViewModel
@@ -43,4 +44,5 @@ val sharedModule = module {
     factory { SplashViewModel(get()) }
     factory { HomeViewModel(get()) }
     factory { DeviceViewModel(get()) }
+    factory { ProfileViewModel(get(), get()) }
 }
