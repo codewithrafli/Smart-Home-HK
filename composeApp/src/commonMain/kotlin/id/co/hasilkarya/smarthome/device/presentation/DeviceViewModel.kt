@@ -72,8 +72,10 @@ class DeviceViewModel(
                             device = result,
                             isLoading = false,
                             uiConfig = result.uiConfig["control_type"].toString(),
-                            sliderValue = result.properties[result.properties.keys.toList()[1]].toString()
-                                .toFloatOrNull() ?: 0f
+                            sliderValue = if (result.properties.keys.toList().size == 2) {
+                                result.properties[result.properties.keys.toList()[1]].toString()
+                                    .toFloatOrNull() ?: 0f
+                            } else 0f
                         )
                     }
                 }
