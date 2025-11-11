@@ -11,16 +11,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import id.co.hasilkarya.smarthome.core.navigation.data.AutomationDestination
-import id.co.hasilkarya.smarthome.core.navigation.data.DeviceDestination
-import id.co.hasilkarya.smarthome.core.navigation.data.HistoryDestination
-import id.co.hasilkarya.smarthome.core.navigation.data.HomeDestination
-import id.co.hasilkarya.smarthome.core.navigation.data.ProfileDestination
+import id.co.hasilkarya.smarthome.core.navigation.data.*
 import id.co.hasilkarya.smarthome.core.theme.BrokenWhite
 import id.co.hasilkarya.smarthome.device.presentation.DeviceScreen
 import id.co.hasilkarya.smarthome.device.presentation.DeviceViewModel

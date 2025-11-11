@@ -72,7 +72,7 @@ fun DeviceScreen(
                             )
                         }
                         Text(
-                            text = state.device?.name ?: stringResource(Res.string.loading),
+                            text = state.device.name,
                             style = MaterialTheme.typography.titleLarge
                         )
                         Box(modifier = Modifier.size(32.dp))
@@ -121,7 +121,7 @@ fun DeviceScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                             ) {
                                 Text(
-                                    text = if (state.device!!.properties.keys.toList()[1] == KEY_BRIGHTNESS)
+                                    text = if (state.device.properties.keys.toList()[1] == KEY_BRIGHTNESS)
                                         stringResource(Res.string.intensity)
                                     else stringResource(Res.string.unknown)
                                 )

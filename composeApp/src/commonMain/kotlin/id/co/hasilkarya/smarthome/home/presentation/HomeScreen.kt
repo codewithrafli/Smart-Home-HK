@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import id.co.hasilkarya.smarthome.core.navigation.data.DeviceDestination
 import id.co.hasilkarya.smarthome.core.presentation.CustomLoadingNotification
 import id.co.hasilkarya.smarthome.core.presentation.CustomNotification
 import id.co.hasilkarya.smarthome.core.theme.BrokenWhite
@@ -193,7 +192,7 @@ fun HomeScreenPreview() {
         HomeScreen(
             state = HomeState(),
             onEvent = { },
-            onNavigate = {  }
+            onNavigate = { }
         )
     }
 }
