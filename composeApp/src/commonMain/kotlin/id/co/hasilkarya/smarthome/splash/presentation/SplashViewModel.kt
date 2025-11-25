@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 
 class SplashViewModel(
     repository: SplashRepository
@@ -17,5 +18,11 @@ class SplashViewModel(
     val state = combine(_token, _state) { token, state ->
         state.copy(token = token)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), SplashState())
+
+    fun onEvent(event: SplashEvent) {
+        when (event) {
+            is SplashEvent.OnBiometricAuthSuccess -> _state.update { it.copy(authBiometricSuccess = true) }
+        }
+    }
 
 }

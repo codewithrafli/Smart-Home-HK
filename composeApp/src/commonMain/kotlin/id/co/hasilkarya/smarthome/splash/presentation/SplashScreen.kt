@@ -10,6 +10,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.github.zaval.biometricauthentificator.rememberBiometricAuthHelper
 import id.co.hasilkarya.smarthome.core.navigation.data.LoginDestination
 import id.co.hasilkarya.smarthome.core.navigation.data.MainGraph
 import id.co.hasilkarya.smarthome.core.theme.BrokenWhite
@@ -22,14 +23,25 @@ import smarthomehasilkarya.composeapp.generated.resources.app_name
 @Composable
 fun SplashScreen(
     state: SplashState,
+    onEvent: (SplashEvent) -> Unit,
     onNavigate: (Any) -> Unit,
 ) {
+    val biometricAuthHelper = rememberBiometricAuthHelper()
 
     LaunchedEffect(state.token) {
         delay(2000)
-        if (state.token.isNotBlank())
+        if (state.token.isNotBlank()) {
+            biometricAuthHelper.authenticate(
+                onSuccess = { onEvent(SplashEvent.OnBiometricAuthSuccess(true)) },
+                onFailure = { }
+            )
+        } else
+            onNavigate(LoginDestination)
+    }
+
+    LaunchedEffect(state.authBiometricSuccess) {
+        if (state.authBiometricSuccess)
             onNavigate(MainGraph)
-        else onNavigate(LoginDestination)
     }
 
     Box(
@@ -49,6 +61,7 @@ fun SplashScreen(
 fun SplashScreenPreview() {
     SplashScreen(
         state = SplashState(),
-        onNavigate = { }
+        onNavigate = { },
+        onEvent = { }
     )
 }
