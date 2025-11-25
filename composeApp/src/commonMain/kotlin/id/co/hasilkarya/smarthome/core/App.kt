@@ -11,7 +11,6 @@ import id.co.hasilkarya.smarthome.core.navigation.data.LoginDestination
 import id.co.hasilkarya.smarthome.core.navigation.data.MainGraph
 import id.co.hasilkarya.smarthome.core.navigation.data.SplashDestination
 import id.co.hasilkarya.smarthome.core.theme.SmartHomeTheme
-import id.co.hasilkarya.smarthome.core.utils.log
 import id.co.hasilkarya.smarthome.login.presentation.LoginScreen
 import id.co.hasilkarya.smarthome.login.presentation.LoginViewModel
 import id.co.hasilkarya.smarthome.splash.presentation.SplashScreen
@@ -35,9 +34,10 @@ fun App() {
                     state = state,
                     onNavigate = {
                         navController.navigate(it) {
-                            popUpTo(it) { inclusive = true }
+                            popUpTo(0) { inclusive = true }
                         }
-                    }
+                    },
+                    onEvent = viewModel::onEvent
                 )
             }
             composable<LoginDestination> {

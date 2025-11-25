@@ -36,6 +36,7 @@ kotlin {
 
             /* Ktor OkHttp */
             implementation(libs.ktor.client.okhttp)
+
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -69,6 +70,8 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.client.auth)
+
+            implementation(libs.biometric.auth.ktx)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
