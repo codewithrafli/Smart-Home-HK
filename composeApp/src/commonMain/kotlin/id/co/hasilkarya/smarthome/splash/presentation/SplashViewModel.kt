@@ -14,14 +14,15 @@ class SplashViewModel(
 ) : ViewModel() {
 
     private val _token = repository.getToken()
+    private val _biometricAuthEnabled = repository.getBiometricAuthEnabled()
     private val _state = MutableStateFlow(SplashState())
-    val state = combine(_token, _state) { token, state ->
-        state.copy(token = token)
+    val state = combine(_token, _biometricAuthEnabled, _state) { token, biometricAuthEnabled, state ->
+        state.copy(token = token, biometricAuthEnabled = biometricAuthEnabled)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), SplashState())
 
     fun onEvent(event: SplashEvent) {
         when (event) {
-            is SplashEvent.OnBiometricAuthSuccess -> _state.update { it.copy(authBiometricSuccess = true) }
+            is SplashEvent.OnBiometricAuthSuccess -> _state.update { it.copy(biometricAuthSuccess = true) }
         }
     }
 

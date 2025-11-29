@@ -6,4 +6,6 @@ interface SplashRepository {
 
     fun getToken(): Flow<String>
 
+    fun getBiometricAuthEnabled(): Flow<Boolean>
+
 }

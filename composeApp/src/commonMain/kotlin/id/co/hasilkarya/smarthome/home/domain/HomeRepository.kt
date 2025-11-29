@@ -16,4 +16,8 @@ interface HomeRepository {
 
     suspend fun updateDevice(id: Int,token: String, request: Map<String, Any?>): Result<Boolean, DataError.Remote>
 
+    suspend fun saveBiometricAuth(enabled: Boolean): Result<Boolean, DataError.Local>
+
+    fun getBiometricAuthEnabled(): Flow<Boolean>
+
 }

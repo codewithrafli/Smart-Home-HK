@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonPinCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,10 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import id.co.hasilkarya.smarthome.core.presentation.CustomLoadingNotification
 import id.co.hasilkarya.smarthome.core.theme.BrokenWhite
+import id.co.hasilkarya.smarthome.profile.presentation.components.BiometricAuthOption
 import io.ktor.client.engine.callContext
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import smarthomehasilkarya.composeapp.generated.resources.Res
+import smarthomehasilkarya.composeapp.generated.resources.biometric_auth
 import smarthomehasilkarya.composeapp.generated.resources.logout
 
 @Composable
@@ -73,6 +76,12 @@ fun ProfileScreen(
                 }
             }
             Spacer(modifier = Modifier.size(16.dp))
+            BiometricAuthOption(
+                title = stringResource(Res.string.biometric_auth),
+                enabled = state.biometricAuthEnabled,
+                onAction = { onEvent(ProfileEvent.OnBiometricAuthClick(!state.biometricAuthEnabled)) }
+            )
+            Spacer(modifier = Modifier.size(16.dp))
             Button(
                 onClick = {
                     onEvent(ProfileEvent.OnLogoutClick)
@@ -81,7 +90,8 @@ fun ProfileScreen(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.error,
                     contentColor = MaterialTheme.colorScheme.onError
-                )
+                ),
+                shape = CardDefaults.shape
             ) {
                 Text(text = stringResource(Res.string.logout))
             }

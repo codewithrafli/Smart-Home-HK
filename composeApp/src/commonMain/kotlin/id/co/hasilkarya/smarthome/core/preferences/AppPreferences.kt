@@ -13,6 +13,19 @@ class AppPreferences(
 
     private val tokenKey = stringPreferencesKey("token")
     private val userIdKey = stringPreferencesKey("userId")
+    private val biometricKey = stringPreferencesKey("biometric")
+
+    suspend fun saveBiometric(biometric: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[biometricKey] = biometric.toString()
+        }
+    }
+
+    fun getBiometric(): Flow<Boolean> {
+        return dataStore.data.map { preferences ->
+            preferences[biometricKey]?.toBoolean() ?: false
+        }
+    }
 
     suspend fun saveToken(token: String) {
         dataStore.edit { preferences ->

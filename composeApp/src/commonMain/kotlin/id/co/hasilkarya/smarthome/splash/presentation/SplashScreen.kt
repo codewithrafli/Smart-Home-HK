@@ -28,19 +28,22 @@ fun SplashScreen(
 ) {
     val biometricAuthHelper = rememberBiometricAuthHelper()
 
-    LaunchedEffect(state.token) {
+    LaunchedEffect(state.token, state.biometricAuthEnabled) {
         delay(2000)
         if (state.token.isNotBlank()) {
-            biometricAuthHelper.authenticate(
-                onSuccess = { onEvent(SplashEvent.OnBiometricAuthSuccess(true)) },
-                onFailure = { }
-            )
+            if (state.biometricAuthEnabled) {
+                biometricAuthHelper.authenticate(
+                    onSuccess = { onEvent(SplashEvent.OnBiometricAuthSuccess(true)) },
+                    onFailure = { }
+                )
+            } else
+                onNavigate(MainGraph)
         } else
             onNavigate(LoginDestination)
     }
 
-    LaunchedEffect(state.authBiometricSuccess) {
-        if (state.authBiometricSuccess)
+    LaunchedEffect(state.biometricAuthSuccess) {
+        if (state.biometricAuthSuccess)
             onNavigate(MainGraph)
     }
 

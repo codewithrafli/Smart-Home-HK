@@ -49,4 +49,7 @@
     <string name="evening">Selamat Malam,</string>
     <string name="your_device">Perangkat Anda Saat Ini</string>
     <string name="all_device">Semua Device</string>
+
+    <!--  Profile Screen Strings  -->
+    <string name="biometric_auth">Autentikasi Biometrik</string>
 </resources>

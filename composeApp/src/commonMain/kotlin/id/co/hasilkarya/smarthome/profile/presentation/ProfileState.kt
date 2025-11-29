@@ -10,4 +10,5 @@ data class ProfileState(
     val isSuccess: Boolean = false,
     val isError: Boolean = false,
     val message: UiText = UiText.DynamicString(""),
+    val biometricAuthEnabled: Boolean = false
 )

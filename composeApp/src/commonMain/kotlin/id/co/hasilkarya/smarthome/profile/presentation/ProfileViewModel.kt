@@ -12,19 +12,28 @@ import kotlinx.coroutines.launch
 
 class ProfileViewModel(
     private val repository: HomeRepository,
-    private val loginRepository: LoginRepository
+    private val loginRepository: LoginRepository,
 ) : ViewModel() {
 
     private val _token = repository.getToken()
+    private val _biometricAuthEnabled = repository.getBiometricAuthEnabled()
     private val _state = MutableStateFlow(ProfileState())
-    val state = combine(_token, _state) { token, state ->
-        state.copy(token = token)
+    val state = combine(_token, _biometricAuthEnabled, _state) { token, biometricAuthEnabled, state ->
+        state.copy(token = token, biometricAuthEnabled = biometricAuthEnabled)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), ProfileState())
 
     fun onEvent(event: ProfileEvent) {
         when (event) {
             ProfileEvent.OnLoadData -> loadData()
             ProfileEvent.OnLogoutClick -> logout()
+            is ProfileEvent.OnBiometricAuthClick -> changeBiometricAuth(event.isEnabled)
+        }
+    }
+
+    private fun changeBiometricAuth(isEnabled: Boolean) = viewModelScope.launch() {
+        repository.saveBiometricAuth(isEnabled)
+        _state.update {
+            it.copy(biometricAuthEnabled = isEnabled)
         }
     }
 
