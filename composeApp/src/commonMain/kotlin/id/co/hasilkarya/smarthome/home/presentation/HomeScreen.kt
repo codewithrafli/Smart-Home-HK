@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -20,6 +21,7 @@ import id.co.hasilkarya.smarthome.core.theme.BrokenWhite
 import id.co.hasilkarya.smarthome.core.theme.DarkBlue
 import id.co.hasilkarya.smarthome.core.theme.SmartHomeTheme
 import id.co.hasilkarya.smarthome.home.presentation.components.DeviceCard
+import id.co.hasilkarya.smarthome.home.presentation.components.HomeCard
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.painterResource
@@ -41,8 +43,6 @@ fun HomeScreen(
             onEvent(HomeEvent.OnLoadData)
     }
 
-    val deviceRows = state.devices.chunked(2)
-
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
@@ -51,20 +51,41 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column {
-                    Text(
-                        text = if (getCurrentHourInt() in 6..11)
-                            stringResource(Res.string.morning)
-                        else if (getCurrentHourInt() in 12..17)
-                            stringResource(Res.string.afternoon)
-                        else stringResource(Res.string.evening),
-                        color = BrokenWhite
-                    )
-                    Text(
-                        text = state.user?.name ?: "Loading...",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = BrokenWhite
-                    )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    // Show back button when viewing devices in a home
+                    if (state.selectedHomeId != null) {
+                        IconButton(
+                            onClick = { onEvent(HomeEvent.OnBackToHomes) }
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back",
+                                tint = BrokenWhite
+                            )
+                        }
+                    }
+                    Column {
+                        Text(
+                            text = if (state.selectedHomeId == null) {
+                                if (getCurrentHourInt() in 6..11)
+                                    stringResource(Res.string.morning)
+                                else if (getCurrentHourInt() in 12..17)
+                                    stringResource(Res.string.afternoon)
+                                else stringResource(Res.string.evening)
+                            } else {
+                                stringResource(Res.string.app_name)
+                            },
+                            color = BrokenWhite
+                        )
+                        Text(
+                            text = state.selectedHomeName ?: (state.user?.name ?: "Loading..."),
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = BrokenWhite
+                        )
+                    }
                 }
                 Surface(
                     color = DarkBlue.copy(alpha = 0.2f),
@@ -88,90 +109,193 @@ fun HomeScreen(
             ) {
                 CustomLoadingNotification()
             }
-            LazyColumn(
-                contentPadding = PaddingValues(
-                    top = it.calculateTopPadding(),
-                    start = 16.dp,
-                    end = 16.dp,
-                ),
-            ) {
-                if (state.isError) {
-                    item {
-                        AnimatedVisibility(
-                            state.isError && state.message.asComposableString().isNotEmpty()
-                        ) {
-                            CustomNotification(
-                                isError = state.isError,
-                                data = state.message.asComposableString()
-                            )
-                        }
-                    }
+
+            // Show either homes list or devices list based on selection
+            if (state.selectedHomeId == null) {
+                // Show homes with featured devices
+                HomesListContent(
+                    state = state,
+                    topPadding = it.calculateTopPadding(),
+                    onEvent = onEvent
+                )
+            } else {
+                // Show all devices for selected home
+                DevicesListContent(
+                    state = state,
+                    topPadding = it.calculateTopPadding(),
+                    onEvent = onEvent,
+                    onNavigate = onNavigate
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun HomesListContent(
+    state: HomeState,
+    topPadding: androidx.compose.ui.unit.Dp,
+    onEvent: (HomeEvent) -> Unit
+) {
+    LazyColumn(
+        contentPadding = PaddingValues(
+            top = topPadding,
+            start = 16.dp,
+            end = 16.dp,
+            bottom = 16.dp
+        ),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        if (state.isError) {
+            item {
+                AnimatedVisibility(
+                    state.isError && state.message.asComposableString().isNotEmpty()
+                ) {
+                    CustomNotification(
+                        isError = state.isError,
+                        data = state.message.asComposableString()
+                    )
                 }
-                item {
+            }
+        }
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(Res.string.your_device),
+                    color = BrokenWhite,
+                )
+                Surface(
+                    color = Color.Transparent,
+                    onClick = { }
+                ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = stringResource(Res.string.your_device),
-                            color = BrokenWhite,
+                            text = stringResource(Res.string.all_device),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = BrokenWhite
                         )
-                        Surface(
-                            color = Color.Transparent,
-                            onClick = { }
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Text(
-                                    text = stringResource(Res.string.all_device),
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = BrokenWhite
-                                )
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                                    contentDescription = stringResource(Res.string.all_device),
-                                    tint = BrokenWhite,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                            }
-                        }
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                            contentDescription = stringResource(Res.string.all_device),
+                            tint = BrokenWhite,
+                            modifier = Modifier.size(16.dp)
+                        )
                     }
                 }
-                items(deviceRows) { devicePair ->
-                    Row(
-                        modifier = Modifier
-                            .height(IntrinsicSize.Min)
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        DeviceCard(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight(),
-                            device = devicePair.first(),
-                            onToggle = { device, property, value ->
-                                onEvent(HomeEvent.OnDeviceToggle(device, property, value))
-                            },
-                            onClick = { onNavigate(devicePair.first().id) }
-                        )
+            }
+        }
+        items(state.homes) { home ->
+            HomeCard(
+                modifier = Modifier.fillMaxWidth(),
+                homeWithDevices = home,
+                onToggle = { device, property, value ->
+                    onEvent(HomeEvent.OnDeviceToggle(device, property, value))
+                },
+                onClick = {
+                    onEvent(HomeEvent.OnSelectHome(home.id, home.name))
+                }
+            )
+        }
+    }
+}
 
-                        if (devicePair.size > 1) {
-                            DeviceCard(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .fillMaxHeight(),
-                                device = devicePair.last(),
-                                onToggle = { device, property, value ->
-                                    onEvent(HomeEvent.OnDeviceToggle(device, property, value))
-                                },
-                                onClick = { onNavigate(devicePair[1].id) }
-                            )
-                        } else {
-                            Spacer(Modifier.weight(1f))
-                        }
+@Composable
+private fun DevicesListContent(
+    state: HomeState,
+    topPadding: androidx.compose.ui.unit.Dp,
+    onEvent: (HomeEvent) -> Unit,
+    onNavigate: (Int?) -> Unit
+) {
+    val deviceRows = state.devices.chunked(2)
+
+    LazyColumn(
+        contentPadding = PaddingValues(
+            top = topPadding,
+            start = 16.dp,
+            end = 16.dp,
+        ),
+    ) {
+        if (state.isError) {
+            item {
+                AnimatedVisibility(
+                    state.isError && state.message.asComposableString().isNotEmpty()
+                ) {
+                    CustomNotification(
+                        isError = state.isError,
+                        data = state.message.asComposableString()
+                    )
+                }
+            }
+        }
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(Res.string.your_device),
+                    color = BrokenWhite,
+                )
+                Surface(
+                    color = Color.Transparent,
+                    onClick = { }
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.all_device),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = BrokenWhite
+                        )
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                            contentDescription = stringResource(Res.string.all_device),
+                            tint = BrokenWhite,
+                            modifier = Modifier.size(16.dp)
+                        )
                     }
+                }
+            }
+        }
+        items(deviceRows) { devicePair ->
+            Row(
+                modifier = Modifier
+                    .height(IntrinsicSize.Min)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                DeviceCard(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    device = devicePair.first(),
+                    onToggle = { device, property, value ->
+                        onEvent(HomeEvent.OnDeviceToggle(device, property, value))
+                    },
+                    onClick = { onNavigate(devicePair.first().id) }
+                )
+
+                if (devicePair.size > 1) {
+                    DeviceCard(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
+                        device = devicePair.last(),
+                        onToggle = { device, property, value ->
+                            onEvent(HomeEvent.OnDeviceToggle(device, property, value))
+                        },
+                        onClick = { onNavigate(devicePair[1].id) }
+                    )
+                } else {
+                    Spacer(Modifier.weight(1f))
                 }
             }
         }

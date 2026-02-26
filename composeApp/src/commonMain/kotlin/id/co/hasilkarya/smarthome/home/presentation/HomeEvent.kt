@@ -5,4 +5,6 @@ import id.co.hasilkarya.smarthome.home.domain.models.Device
 sealed interface HomeEvent {
     data object OnLoadData : HomeEvent
     data class OnDeviceToggle(val device: Device, val property: String, val value: String) : HomeEvent
+    data class OnSelectHome(val homeId: Int, val homeName: String) : HomeEvent
+    data object OnBackToHomes : HomeEvent
 }

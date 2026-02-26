@@ -24,7 +24,26 @@ class HomeViewModel(
         when (event) {
             HomeEvent.OnLoadData -> loadData()
             is HomeEvent.OnDeviceToggle -> updateDevice(event.device, event.property, event.value)
+            is HomeEvent.OnSelectHome -> selectHome(event.homeId, event.homeName)
+            HomeEvent.OnBackToHomes -> backToHomes()
         }
+    }
+
+    private fun selectHome(homeId: Int, homeName: String) {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true, selectedHomeId = homeId, selectedHomeName = homeName) }
+            repository.getDevicesByHome(state.value.token, homeId)
+                .onSuccess { result ->
+                    _state.update { it.copy(devices = result, isLoading = false) }
+                }
+                .onError { error ->
+                    _state.update { it.copy(isLoading = false, isError = true, message = error.asUiText()) }
+                }
+        }
+    }
+
+    private fun backToHomes() {
+        _state.update { it.copy(selectedHomeId = null, selectedHomeName = null, devices = emptyList()) }
     }
 
     private fun updateDevice(device: Device, property: String, value: String) {
@@ -34,7 +53,16 @@ class HomeViewModel(
             _state.update { it.copy(isLoading = true) }
             repository.updateDevice(id = device.id, token = state.value.token, request = propertyMutable)
                 .onSuccess { _ ->
-                    loadData()
+                    // Reload current view data
+                    val homeId = state.value.selectedHomeId
+                    if (homeId != null) {
+                        repository.getDevicesByHome(state.value.token, homeId)
+                            .onSuccess { result ->
+                                _state.update { it.copy(devices = result, isLoading = false) }
+                            }
+                    } else {
+                        loadData()
+                    }
                 }
                 .onError { error ->
                     _state.update { it.copy(isLoading = false, isError = true, message = error.asUiText()) }
@@ -51,9 +79,9 @@ class HomeViewModel(
             .onError { error ->
                 _state.update { it.copy(isError = true, message = error.asUiText(), isLoading = false) }
             }
-        repository.getDevices(state.value.token)
+        repository.getHomes(state.value.token)
             .onSuccess { result ->
-                _state.update { it.copy(devices = result, isLoading = false) }
+                _state.update { it.copy(homes = result, isLoading = false) }
             }
             .onError { error ->
                 _state.update { it.copy(isLoading = false, isError = true, message = error.asUiText()) }

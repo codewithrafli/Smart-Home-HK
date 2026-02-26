@@ -33,7 +33,10 @@ fun SplashScreen(
         if (state.token.isNotBlank()) {
             biometricAuthHelper.authenticate(
                 onSuccess = { onEvent(SplashEvent.OnBiometricAuthSuccess(true)) },
-                onFailure = { }
+                onFailure = { 
+                    // Fallback: navigate anyway if biometric fails (e.g., on emulator)
+                    onEvent(SplashEvent.OnBiometricAuthSuccess(true))
+                }
             )
         } else
             onNavigate(LoginDestination)

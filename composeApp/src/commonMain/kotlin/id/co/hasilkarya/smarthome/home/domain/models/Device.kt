@@ -10,4 +10,6 @@ data class Device(
     val gpio: String? = null,
     val properties: Map<String, Any?>,
     val uiConfig: Map<String, Any?>,
+    val sort: Int = 0,
+    val isFeatured: Boolean = false
 )

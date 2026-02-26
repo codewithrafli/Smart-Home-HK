@@ -72,6 +72,10 @@ kotlin {
             implementation(libs.ktor.client.auth)
 
             implementation(libs.biometric.auth.ktx)
+
+            /* Coil Image Loading */
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

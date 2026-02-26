@@ -8,16 +8,19 @@ import kotlinx.serialization.SerialName
 data class HomeDto(
 
 	@SerialName("updated_at")
-	val updatedAt: String,
+	val updatedAt: String? = null,
 
 	@SerialName("name")
 	val name: String,
 
 	@SerialName("created_at")
-	val createdAt: String,
+	val createdAt: String? = null,
 
 	@SerialName("id")
-	val id: Int
+	val id: Int,
+
+	@SerialName("image")
+	val image: String? = null
 )
 
-fun HomeDto.toDomain() = Home(id = id, name = name)
+fun HomeDto.toDomain() = Home(id = id, name = name, image = image)

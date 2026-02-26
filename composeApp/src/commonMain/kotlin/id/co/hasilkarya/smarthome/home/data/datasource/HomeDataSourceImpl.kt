@@ -8,6 +8,7 @@ import id.co.hasilkarya.smarthome.core.preferences.AppPreferences
 import id.co.hasilkarya.smarthome.home.data.dto.DeviceUpdateResponse
 import id.co.hasilkarya.smarthome.home.data.dto.DevicesResponse
 import id.co.hasilkarya.smarthome.home.data.dto.GetUserResponse
+import id.co.hasilkarya.smarthome.home.data.dto.HomesResponse
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.flow.Flow
@@ -24,6 +25,22 @@ class HomeDataSourceImpl(
     override suspend fun getDevices(token: String): Result<DevicesResponse, DataError.Remote> {
         return safeCall<DevicesResponse> {
             client.get("$BASE_URL/devices") {
+                bearerAuth(token)
+            }
+        }
+    }
+
+    override suspend fun getHomes(token: String): Result<HomesResponse, DataError.Remote> {
+        return safeCall<HomesResponse> {
+            client.get("$BASE_URL/homes") {
+                bearerAuth(token)
+            }
+        }
+    }
+
+    override suspend fun getDevicesByHome(token: String, homeId: Int): Result<DevicesResponse, DataError.Remote> {
+        return safeCall<DevicesResponse> {
+            client.get("$BASE_URL/homes/$homeId/devices") {
                 bearerAuth(token)
             }
         }

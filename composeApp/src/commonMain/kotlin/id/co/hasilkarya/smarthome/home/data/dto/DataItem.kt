@@ -49,7 +49,13 @@ data class DataItem(
 	val homeDto: HomeDto,
 
     @SerialName("gpio")
-	val gpio: String? = null
+	val gpio: String? = null,
+
+    @SerialName("sort")
+    val sort: Int = 0,
+
+    @SerialName("is_featured")
+    val isFeatured: Boolean = false
 )
 
 fun DataItem.toDomain() = Device(
@@ -61,7 +67,9 @@ fun DataItem.toDomain() = Device(
     gpio = gpio,
     properties = properties.toDomainMap(),
     uiConfig = uiConfig.toDomainMap(),
-    uniqueId = uniqueId
+    uniqueId = uniqueId,
+    sort = sort,
+    isFeatured = isFeatured
 )
 
 private fun Map<String, JsonElement>.toDomainMap(): Map<String, Any?> {
