@@ -12,7 +12,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import id.co.hasilkarya.smarthome.core.theme.BrokenWhite
 import id.co.hasilkarya.smarthome.core.theme.DarkBlue
+import id.co.hasilkarya.smarthome.core.theme.GoodGreen
 import id.co.hasilkarya.smarthome.core.theme.SmartHomeTheme
+import id.co.hasilkarya.smarthome.device.presentation.utils.DeviceCategory
+import id.co.hasilkarya.smarthome.device.presentation.utils.classifyDevice
 import id.co.hasilkarya.smarthome.home.domain.models.Device
 import id.co.hasilkarya.smarthome.home.domain.models.DeviceType
 import id.co.hasilkarya.smarthome.home.domain.models.Home
@@ -25,6 +28,13 @@ import smarthomehasilkarya.composeapp.generated.resources.*
 const val LAMP_ICON_KEY = "fa-lightbulb"
 const val THERMOMETER_ICON_KEY = "fa-thermometer"
 const val GATE_ICON_KEY = "fa-warehouse"
+const val DROPLET_ICON_KEY = "fa-droplet"
+const val SMOKE_ICON_KEY = "fa-smoke"
+const val WIND_ICON_KEY = "fa-wind"
+const val FIRE_ICON_KEY = "fa-fire"
+const val SEEDLING_ICON_KEY = "fa-seedling"
+const val FAUCET_ICON_KEY = "fa-faucet-drip"
+const val SNOWFLAKE_ICON_KEY = "fa-snowflake"
 const val STATE_ON_KEY = "on"
 const val STATE_OPEN_KEY = "open"
 const val STATE_OFF_KEY = "off"
@@ -37,6 +47,9 @@ fun DeviceCard(
     onToggle: (device: Device, property: String, value: String) -> Unit,
     onClick: () -> Unit,
 ) {
+    val controlType = device.uiConfig["control_type"]?.toString()
+    val category = classifyDevice(controlType)
+
     Card(
         modifier = modifier.fillMaxHeight(),
         colors = CardDefaults.cardColors(
@@ -62,9 +75,16 @@ fun DeviceCard(
                             LAMP_ICON_KEY -> painterResource(Res.drawable.lamp_on)
                             GATE_ICON_KEY -> painterResource(Res.drawable.barricade)
                             THERMOMETER_ICON_KEY -> painterResource(Res.drawable.thermometer)
+                            DROPLET_ICON_KEY -> painterResource(Res.drawable.droplet)
+                            SMOKE_ICON_KEY -> painterResource(Res.drawable.smoke)
+                            WIND_ICON_KEY -> painterResource(Res.drawable.wind)
+                            FIRE_ICON_KEY -> painterResource(Res.drawable.fire)
+                            SEEDLING_ICON_KEY -> painterResource(Res.drawable.seedling)
+                            FAUCET_ICON_KEY -> painterResource(Res.drawable.faucet)
+                            SNOWFLAKE_ICON_KEY -> painterResource(Res.drawable.fan)
                             else -> painterResource(Res.drawable.lamp_on)
                         },
-                        contentDescription = device.properties["icon"].toString()
+                        contentDescription = device.name
                     )
                 }
                 Surface(
@@ -89,37 +109,88 @@ fun DeviceCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    text = when (device.properties["state"]) {
-                        STATE_ON_KEY -> stringResource(Res.string.on)
-                        STATE_OFF_KEY -> stringResource(Res.string.off)
-                        STATE_OPEN_KEY -> stringResource(Res.string.open)
-                        STATE_CLOSED_KEY -> stringResource(Res.string.closed)
-                        else -> stringResource(Res.string.unknown)
-                    },
-                    style = MaterialTheme.typography.titleMedium,
-                    color = BrokenWhite
-                )
-                Switch(
-                    modifier = Modifier.height(16.dp),
-                    checked = device.properties["state"] == STATE_ON_KEY || device.properties["state"] == STATE_OPEN_KEY,
-                    onCheckedChange = {
-                        val newState = when (device.properties["state"]) {
-                            STATE_ON_KEY -> STATE_OFF_KEY
-                            STATE_OFF_KEY -> STATE_ON_KEY
-                            STATE_OPEN_KEY -> STATE_CLOSED_KEY
-                            STATE_CLOSED_KEY -> STATE_OPEN_KEY
-                            else -> STATE_OFF_KEY
+                when (category) {
+                    DeviceCategory.SENSOR -> {
+                        // Show sensor value with unit
+                        val valueKey = device.properties.keys.firstOrNull { it != "state" && it != "feedback" }
+                        val value = device.properties[valueKey]
+                        val unit = device.uiConfig["unit"]?.toString() ?: ""
+
+                        if (valueKey == "smoke") {
+                            val isDetected = value?.toString() == "detected"
+                            Text(
+                                text = if (isDetected) stringResource(Res.string.smoke_detected)
+                                else stringResource(Res.string.smoke_safe),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = if (isDetected) Color.Red else GoodGreen
+                            )
+                        } else {
+                            Text(
+                                text = "$value $unit",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = BrokenWhite
+                            )
                         }
-                        onToggle(device, "state", newState)
-                    },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = DarkBlue,
-                        checkedTrackColor = BrokenWhite,
-                        uncheckedThumbColor = DarkBlue,
-                        uncheckedTrackColor = BrokenWhite,
-                    ),
-                )
+                    }
+                    DeviceCategory.GATE -> {
+                        Text(
+                            text = when (device.properties["state"]) {
+                                STATE_OPEN_KEY -> stringResource(Res.string.buka)
+                                STATE_CLOSED_KEY -> stringResource(Res.string.tutup)
+                                else -> stringResource(Res.string.unknown)
+                            },
+                            style = MaterialTheme.typography.titleMedium,
+                            color = BrokenWhite
+                        )
+                        Switch(
+                            modifier = Modifier.height(16.dp),
+                            checked = device.properties["state"] == STATE_OPEN_KEY,
+                            onCheckedChange = {
+                                val newState = if (device.properties["state"] == STATE_OPEN_KEY) STATE_CLOSED_KEY else STATE_OPEN_KEY
+                                onToggle(device, "state", newState)
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = DarkBlue,
+                                checkedTrackColor = BrokenWhite,
+                                uncheckedThumbColor = DarkBlue,
+                                uncheckedTrackColor = BrokenWhite,
+                            ),
+                        )
+                    }
+                    else -> {
+                        Text(
+                            text = when (device.properties["state"]) {
+                                STATE_ON_KEY -> stringResource(Res.string.on)
+                                STATE_OFF_KEY -> stringResource(Res.string.off)
+                                STATE_OPEN_KEY -> stringResource(Res.string.open)
+                                STATE_CLOSED_KEY -> stringResource(Res.string.closed)
+                                else -> stringResource(Res.string.unknown)
+                            },
+                            style = MaterialTheme.typography.titleMedium,
+                            color = BrokenWhite
+                        )
+                        Switch(
+                            modifier = Modifier.height(16.dp),
+                            checked = device.properties["state"] == STATE_ON_KEY || device.properties["state"] == STATE_OPEN_KEY,
+                            onCheckedChange = {
+                                val newState = when (device.properties["state"]) {
+                                    STATE_ON_KEY -> STATE_OFF_KEY
+                                    STATE_OFF_KEY -> STATE_ON_KEY
+                                    STATE_OPEN_KEY -> STATE_CLOSED_KEY
+                                    STATE_CLOSED_KEY -> STATE_OPEN_KEY
+                                    else -> STATE_OFF_KEY
+                                }
+                                onToggle(device, "state", newState)
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = DarkBlue,
+                                checkedTrackColor = BrokenWhite,
+                                uncheckedThumbColor = DarkBlue,
+                                uncheckedTrackColor = BrokenWhite,
+                            ),
+                        )
+                    }
+                }
             }
         }
     }

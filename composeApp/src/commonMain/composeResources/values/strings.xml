@@ -49,4 +49,29 @@
     <string name="evening">Selamat Malam,</string>
     <string name="your_device">Perangkat Anda Saat Ini</string>
     <string name="all_device">Semua Device</string>
+
+    <!--  Gate Strings  -->
+    <string name="buka">BUKA</string>
+    <string name="tutup">TUTUP</string>
+    <string name="gate_feedback_opened">Gerbang Terbuka</string>
+    <string name="gate_feedback_closed">Gerbang Tertutup</string>
+    <string name="gate_feedback_unknown">Status Tidak Diketahui</string>
+
+    <!--  Sensor Strings  -->
+    <string name="temperature_label">Suhu</string>
+    <string name="humidity_label">Kelembaban</string>
+    <string name="smoke_detected">Asap Terdeteksi</string>
+    <string name="smoke_safe">Aman</string>
+    <string name="particle_label">Partikel</string>
+    <string name="gas_label">Gas</string>
+    <string name="soil_moisture_label">Kelembaban Tanah</string>
+
+    <!--  Pump Strings  -->
+    <string name="pump_speed">Kecepatan Pompa</string>
+    <string name="pump_on">Pompa Menyala</string>
+    <string name="pump_off">Pompa Mati</string>
+
+    <!--  Sensor History  -->
+    <string name="sensor_history">Riwayat Sensor</string>
+    <string name="no_readings">Belum ada data</string>
 </resources>

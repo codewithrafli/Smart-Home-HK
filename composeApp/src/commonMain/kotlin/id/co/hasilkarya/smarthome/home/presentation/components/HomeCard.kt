@@ -164,7 +164,7 @@ private fun FeaturedDeviceRow(
                     modifier = Modifier.height(28.dp)
                 ) {
                     Text(
-                        text = if (currentState.contains("open", ignoreCase = true) || currentState.contains("close", ignoreCase = true)) "CLOSE" else "OFF",
+                        text = if (currentState.contains("open", ignoreCase = true) || currentState.contains("close", ignoreCase = true)) "TUTUP" else "OFF",
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -184,7 +184,7 @@ private fun FeaturedDeviceRow(
                     modifier = Modifier.height(28.dp)
                 ) {
                     Text(
-                        text = if (currentState.contains("open", ignoreCase = true) || currentState.contains("close", ignoreCase = true)) "OPEN" else "ON",
+                        text = if (currentState.contains("open", ignoreCase = true) || currentState.contains("close", ignoreCase = true)) "BUKA" else "ON",
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold
                     )

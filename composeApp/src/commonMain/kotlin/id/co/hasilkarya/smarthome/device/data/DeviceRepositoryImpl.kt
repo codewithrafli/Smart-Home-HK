@@ -8,6 +8,7 @@ import id.co.hasilkarya.smarthome.device.domain.DeviceRepository
 import id.co.hasilkarya.smarthome.home.data.dto.toDomain
 import id.co.hasilkarya.smarthome.home.data.util.buildUpdateRequestBody
 import id.co.hasilkarya.smarthome.home.domain.models.Device
+import id.co.hasilkarya.smarthome.home.domain.models.SensorReading
 import kotlinx.coroutines.flow.Flow
 
 class DeviceRepositoryImpl(
@@ -33,6 +34,28 @@ class DeviceRepositoryImpl(
         val requestBody = buildUpdateRequestBody(request)
         return when (val result = dataSource.updateDevice(id, token, requestBody)) {
             is Result.Success -> Result.Success(true)
+            is Result.Error -> Result.Error(result.error)
+        }
+    }
+
+    override suspend fun getLatestReadings(
+        token: String,
+        deviceId: Int
+    ): Result<List<SensorReading>, DataError.Remote> {
+        return when (val result = dataSource.getLatestReadings(token, deviceId)) {
+            is Result.Success -> Result.Success(result.data.data.map { it.toDomain() })
+            is Result.Error -> Result.Error(result.error)
+        }
+    }
+
+    override suspend fun getReadingHistory(
+        token: String,
+        deviceId: Int,
+        type: String,
+        limit: Int
+    ): Result<List<SensorReading>, DataError.Remote> {
+        return when (val result = dataSource.getReadingHistory(token, deviceId, type, limit)) {
+            is Result.Success -> Result.Success(result.data.data.map { it.toDomain() })
             is Result.Error -> Result.Error(result.error)
         }
     }
