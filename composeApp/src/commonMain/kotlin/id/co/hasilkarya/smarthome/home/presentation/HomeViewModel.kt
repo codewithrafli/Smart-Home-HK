@@ -7,6 +7,8 @@ import id.co.hasilkarya.smarthome.core.network.utils.onSuccess
 import id.co.hasilkarya.smarthome.core.presentation.asUiText
 import id.co.hasilkarya.smarthome.home.domain.HomeRepository
 import id.co.hasilkarya.smarthome.home.domain.models.Device
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -14,6 +16,11 @@ class HomeViewModel(
     private val repository: HomeRepository
 ) : ViewModel() {
 
+    companion object {
+        private const val POLL_INTERVAL = 10000L
+    }
+
+    private var pollingJob: Job? = null
     private val _token = repository.getToken()
     private val _state = MutableStateFlow(HomeState())
     val state = combine(_token, _state) { token, state ->
@@ -35,6 +42,7 @@ class HomeViewModel(
             repository.getDevicesByHome(state.value.token, homeId)
                 .onSuccess { result ->
                     _state.update { it.copy(devices = result, isLoading = false) }
+                    startPolling()
                 }
                 .onError { error ->
                     _state.update { it.copy(isLoading = false, isError = true, message = error.asUiText()) }
@@ -44,6 +52,7 @@ class HomeViewModel(
 
     private fun backToHomes() {
         _state.update { it.copy(selectedHomeId = null, selectedHomeName = null, devices = emptyList()) }
+        startPolling()
     }
 
     private fun updateDevice(device: Device, property: String, value: String) {
@@ -82,10 +91,45 @@ class HomeViewModel(
         repository.getHomes(state.value.token)
             .onSuccess { result ->
                 _state.update { it.copy(homes = result, isLoading = false) }
+                startPolling()
             }
             .onError { error ->
                 _state.update { it.copy(isLoading = false, isError = true, message = error.asUiText()) }
             }
+    }
+
+    private fun startPolling() {
+        pollingJob?.cancel()
+        pollingJob = viewModelScope.launch {
+            while (true) {
+                delay(POLL_INTERVAL)
+                val homeId = state.value.selectedHomeId
+                if (homeId != null) {
+                    refreshDevices(homeId)
+                } else {
+                    refreshHomes()
+                }
+            }
+        }
+    }
+
+    private suspend fun refreshHomes() {
+        repository.getHomes(state.value.token)
+            .onSuccess { result ->
+                _state.update { it.copy(homes = result) }
+            }
+    }
+
+    private suspend fun refreshDevices(homeId: Int) {
+        repository.getDevicesByHome(state.value.token, homeId)
+            .onSuccess { result ->
+                _state.update { it.copy(devices = result) }
+            }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        pollingJob?.cancel()
     }
 
 }

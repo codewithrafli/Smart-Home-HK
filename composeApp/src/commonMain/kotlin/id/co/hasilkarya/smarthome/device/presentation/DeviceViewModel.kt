@@ -8,6 +8,8 @@ import id.co.hasilkarya.smarthome.core.presentation.asUiText
 import id.co.hasilkarya.smarthome.device.domain.DeviceRepository
 import id.co.hasilkarya.smarthome.device.presentation.utils.DeviceCategory
 import id.co.hasilkarya.smarthome.device.presentation.utils.classifyDevice
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -15,6 +17,11 @@ class DeviceViewModel(
     private val repository: DeviceRepository
 ) : ViewModel() {
 
+    companion object {
+        private const val POLL_INTERVAL = 5000L
+    }
+
+    private var pollingJob: Job? = null
     private val _token = repository.getToken()
     private val _state = MutableStateFlow(DeviceState())
     val state = combine(_token, _state) { token, state ->
@@ -126,11 +133,57 @@ class DeviceViewModel(
                             loadSensorHistory(valueKey)
                         }
                     }
+
+                    startPolling(id)
                 }
                 .onError { error ->
                     _state.update { it.copy(isError = true, message = error.asUiText(), isLoading = false) }
                 }
         }
+    }
+
+    private fun startPolling(id: Int) {
+        pollingJob?.cancel()
+        pollingJob = viewModelScope.launch {
+            while (true) {
+                delay(POLL_INTERVAL)
+                refreshData(id)
+            }
+        }
+    }
+
+    private suspend fun refreshData(id: Int) {
+        repository.getDevice(id = id, token = state.value.token)
+            .onSuccess { result ->
+                val controlType = result.uiConfig["control_type"]?.toString() ?: ""
+                val category = classifyDevice(controlType)
+
+                _state.update {
+                    it.copy(
+                        device = result,
+                        uiConfig = controlType,
+                        sliderValue = if (result.properties.keys.toList().size == 2) {
+                            result.properties[result.properties.keys.toList()[1]].toString()
+                                .toFloatOrNull() ?: 0f
+                        } else 0f,
+                        pumpSpeed = if (category == DeviceCategory.PUMP) {
+                            (result.properties["speed"] as? Number)?.toInt() ?: 0
+                        } else 0
+                    )
+                }
+
+                if (category == DeviceCategory.SENSOR) {
+                    val valueKey = result.properties.keys.firstOrNull { it != "state" && it != "feedback" }
+                    if (valueKey != null) {
+                        loadSensorHistory(valueKey)
+                    }
+                }
+            }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        pollingJob?.cancel()
     }
 
 }
